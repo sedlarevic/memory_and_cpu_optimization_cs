@@ -15,9 +15,9 @@ public class StateMachine
         CurrentState = State.Idle;
     }
 
-    public ValueTuple<State,State> Step()
+    public (State From, State To) Step()
     {
-        State from =  CurrentState;
+        State from = CurrentState;
         State to = DecideNextState(CurrentState);
         CurrentState = to;
         return (from, to);
