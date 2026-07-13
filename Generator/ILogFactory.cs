@@ -4,5 +4,10 @@ namespace Generator;
 
 public interface ILogFactory
 {
-    IEnumerable<LogEntry> Create(State from, State to, Random rng);
+    int Create(
+        State from,
+        State to,
+        Random rng,
+        int maxCount,
+        Action<LogEntry> consumer);
 }

@@ -29,49 +29,32 @@ if (args.Length >= 3 &&
 if (targetCount <= 0)
 {
     Console.Error.WriteLine(
-        "Broj logova mora biti veći od nule.");
+        "Target count must be greater than zero.");
 
     return;
 }
 
-int seedValue = suppliedSeed ??
-                RandomNumberGenerator.GetInt32(int.MaxValue);
+int seedValue =
+    suppliedSeed ??
+    RandomNumberGenerator.GetInt32(int.MaxValue);
 
-var seed = new Seed(seedValue);
-ILogFactory logFactory = new LogFactory(mode);
+Seed seed = new(seedValue);
+ILogFactory factory = new LogFactory(mode);
 
-var engine = new GeneratorEngine(
-    seed,
-    targetCount,
-    logFactory);
+GeneratorEngine engine =
+    new GeneratorEngine(
+        seed,
+        targetCount,
+        factory);
 
-string outputPath =
-    $"logs-{mode.ToString().ToLowerInvariant()}-" +
-    $"{targetCount}-seed-{seedValue}.txt";
+long checksum = 0;
 
-Console.WriteLine($"Mode: {mode}");
-Console.WriteLine($"Target logs: {targetCount:N0}");
-Console.WriteLine($"Seed: {seedValue}");
-Console.WriteLine($"Output: {outputPath}");
-
-using var writer = new StreamWriter(outputPath);
-
-int writtenCount = 0;
-
-foreach (var log in engine.Run())
+int producedCount = engine.Run(log =>
 {
-    writer.WriteLine(
-        $"{log.Index}|{log.Level}|" +
-        $"{log.From}|{log.To}|{log.Message}");
+    checksum += log.Message.Length;
+});
 
-    writtenCount++;
-
-    if (writtenCount % 100_000 == 0)
-    {
-        Console.WriteLine(
-            $"Generated {writtenCount:N0} logs...");
-    }
-}
-
-Console.WriteLine(
-    $"Generation finished. Written: {writtenCount:N0}");
+Console.WriteLine($"Scenario : {mode}");
+Console.WriteLine($"Seed     : {seedValue}");
+Console.WriteLine($"Produced : {producedCount:N0}");
+Console.WriteLine($"Checksum : {checksum:N0}");
