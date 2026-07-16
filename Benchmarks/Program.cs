@@ -3,4 +3,6 @@ using BenchmarkDotNet.Running;
 using Benchmarks;
 
 BenchmarkRunner.Run<GeneratorBenchmarks>();
-Console.WriteLine("Hello, World!");
+BenchmarkSwitcher
+    .FromAssembly(typeof(GeneratorBenchmarks).Assembly)
+    .Run(args);

@@ -10,11 +10,11 @@
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
       <ProjectReference Include="..\Generator\Generator.csproj" />
+      <ProjectReference Include="..\Resolver\Resolver.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.16.0-preview.1" />
-      <PackageReference Include="BenchmarkDotNetVisualizer" Version="2.1.0" />
+      <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
     </ItemGroup>
 
 </Project>
