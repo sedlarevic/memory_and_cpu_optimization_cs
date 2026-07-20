@@ -1,2 +1,1 @@
-![Sekvencijalni dijagram generisanja logova]("./pngs/Sekvencijalni dijagram generisanja logova.png")
-
+![Sekvencijalni dijagram generisanja logova](./pngs/Sekvencijalni%20dijagram%20generisanja%20logova.png)

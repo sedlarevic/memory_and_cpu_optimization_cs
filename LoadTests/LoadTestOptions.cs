@@ -11,5 +11,5 @@ public sealed class LoadTestOptions
     public int WindowMilliseconds { get; init; } = 100;
 
     public int TargetCount =>
-        DurationSeconds * EventsPerSecond;
+        checked(DurationSeconds * EventsPerSecond);
 }

@@ -2,7 +2,7 @@ using Domain;
 
 namespace Resolver;
 
-public class LogResolver
+public static class LogResolver
 {
     public static LogEntry ResolveWithSplit(string line)
     {
