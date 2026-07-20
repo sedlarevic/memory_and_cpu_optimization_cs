@@ -2,5 +2,7 @@
 using Benchmarks;
 
 BenchmarkSwitcher
-    .FromAssembly(typeof(GeneratorBenchmarks).Assembly)
+    .FromAssembly(
+        typeof(GeneratorProfileBenchmarks)
+            .Assembly)
     .Run(args);

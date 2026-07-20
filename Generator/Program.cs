@@ -21,9 +21,9 @@ if (args.Length >= 3 &&
     Enum.TryParse(
         args[2],
         ignoreCase: true,
-        out GenerationProfile parsedMode))
+        out GenerationProfile parsedProfile))
 {
-    profile = parsedMode;
+    profile = parsedProfile;
 }
 
 if (targetCount <= 0)
@@ -54,7 +54,7 @@ int producedCount = engine.Run(log =>
     checksum += log.Message.Length;
 });
 
-Console.WriteLine($"Scenario : {profile}");
+Console.WriteLine($"Profile : {profile}");
 Console.WriteLine($"Seed     : {seedValue}");
 Console.WriteLine($"Produced : {producedCount:N0}");
 Console.WriteLine($"Checksum : {checksum:N0}");

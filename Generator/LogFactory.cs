@@ -27,7 +27,7 @@ public class LogFactory : ILogFactory
         }
 
         int totalCount;
-        bool burstOccurred = false;
+        bool errorSpikeOccurred = false;
 
         if (to == State.Error)
         {
@@ -35,14 +35,14 @@ public class LogFactory : ILogFactory
             
             if (_profile == GenerationProfile.ErrorHeavy)
             {
-                double burstChance =
+                double errorSpikeChance =
                     from is State.Processing or State.Retry
                         ? 0.40
                         : 0.20;
-                burstOccurred =
-                    rng.NextDouble() < burstChance;
+                errorSpikeOccurred =
+                    rng.NextDouble() < errorSpikeChance;
             }
-            int extraCount = burstOccurred
+            int extraCount = errorSpikeOccurred
                 ? rng.Next(20, 51)
                 : 0;
             totalCount = baseCount + extraCount;
@@ -78,7 +78,7 @@ public class LogFactory : ILogFactory
                         ? "[ERROR]"
                         : "[WARNING]";
 
-                payloadLength = burstOccurred
+                payloadLength = errorSpikeOccurred
                     ? rng.Next(800, 2001)
                     : rng.Next(200, 601);
             }
