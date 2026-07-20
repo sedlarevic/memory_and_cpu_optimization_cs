@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Attributes;
-using Domain;
 using Generator;
 
 namespace Benchmarks;
