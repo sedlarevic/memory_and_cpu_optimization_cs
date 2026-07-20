@@ -85,8 +85,7 @@ public class LogResolver
 
         ReadOnlySpan<char> toSpan =
             ReadNextField(ref remaining);
-
-        // Sve nakon četvrtog separatora pripada poruci.
+        
         ReadOnlySpan<char> messageSpan = remaining;
 
         if (!int.TryParse(indexSpan, out int index) ||

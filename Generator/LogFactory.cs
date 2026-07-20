@@ -4,11 +4,11 @@ namespace Generator;
 
 public class LogFactory : ILogFactory
 {
-    private readonly GenerationMode _mode;
-    public LogFactory(GenerationMode mode)
+    private readonly GenerationProfile _profile;
+    public LogFactory(GenerationProfile profile)
 
     {
-        _mode = mode;
+        _profile = profile;
     }
 
     public int Create(
@@ -33,7 +33,7 @@ public class LogFactory : ILogFactory
         {
             int baseCount = rng.Next(2, 6);
             
-            if (_mode == GenerationMode.Burst)
+            if (_profile == GenerationProfile.ErrorHeavy)
             {
                 double burstChance =
                     from is State.Processing or State.Retry

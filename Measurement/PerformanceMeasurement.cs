@@ -23,9 +23,7 @@ public class PerformanceMeasurement
                 "Target count must be greater than zero.");
         }
 
-        // Svako kontrolisano merenje počinje iz približno
-
-        // jednakog GC stanja.
+        
 
         GC.Collect();
 

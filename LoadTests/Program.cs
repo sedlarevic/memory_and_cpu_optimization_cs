@@ -48,8 +48,7 @@ Console.WriteLine($"Target per run : {options.TargetCount:N0}");
 Console.WriteLine($"Repetitions    : {repetitions}");
 Console.WriteLine();
 
-// Kratak warmup za JIT i inicijalizaciju ThreadPool-a.
-// Rezultat warmup-a ne ulazi u statistiku.
+
 var warmupOptions = new LoadTestOptions
 {
     Seed = options.Seed,

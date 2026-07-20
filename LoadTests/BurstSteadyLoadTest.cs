@@ -59,7 +59,6 @@ public static class BurstSteadyLoadTest
 
         long checksum = 0;
 
-        // Svako izvršavanje počinje iz približno istog GC stanja.
         GC.Collect();
         GC.WaitForPendingFinalizers();
         GC.Collect();
@@ -82,149 +81,142 @@ public static class BurstSteadyLoadTest
         long experimentStarted =
             Stopwatch.GetTimestamp();
 
-        Task consumerTask = Task.Run(
-            async () =>
+        Task consumerTask = Task.Run(async () =>
+        {
+            long localChecksum = 0;
+
+            await foreach (
+                TimedLog item in
+                channel.Reader.ReadAllAsync())
             {
-                long localChecksum = 0;
+                Interlocked.Decrement(
+                    ref currentQueueDepth);
 
-                await foreach (
-                    TimedLog item in
-                    channel.Reader.ReadAllAsync())
+                LogEntry log = item.Log;
+                
+                for (int index = 0;
+                     index < log.Message.Length;
+                     index++)
                 {
-                    Interlocked.Decrement(
-                        ref currentQueueDepth);
-
-                    LogEntry log = item.Log;
-
-                    // Simulira jednostavnu obradu zapisa.
-                    // Identična je u oba scenarija.
-                    for (int index = 0;
-                         index < log.Message.Length;
-                         index++)
-                    {
-                        localChecksum = unchecked(
-                            localChecksum * 31 +
-                            log.Message[index]);
-                    }
-
-                    long completedTimestamp =
-                        Stopwatch.GetTimestamp();
-
-                    long latency =
-                        completedTimestamp -
-                        item.EnqueuedTimestamp;
-
-                    latencyTicks[log.Index - 1] =
-                        latency;
-
-                    long elapsedTicks =
-                        completedTimestamp -
-                        experimentStarted;
-
-                    long elapsedMilliseconds =
-                        elapsedTicks *
-                        1_000L /
-                        Stopwatch.Frequency;
-
-                    int windowIndex =
-                        (int)(
-                            elapsedMilliseconds /
-                            options.WindowMilliseconds);
-
-                    // Ako potrošač završi posle planiranog
-                    // trajanja, rezultat pripada poslednjem prozoru.
-                    windowIndex = Math.Min(
-                        windowIndex,
-                        totalWindows - 1);
-
-                    completedPerWindow[windowIndex]++;
-
-                    processedCount++;
+                    localChecksum = unchecked(
+                        localChecksum * 31 +
+                        log.Message[index]);
                 }
 
-                checksum = localChecksum;
-            });
+                long completedTimestamp =
+                    Stopwatch.GetTimestamp();
 
-        Task producerTask = Task.Run(
-            () =>
+                long latency =
+                    completedTimestamp -
+                    item.EnqueuedTimestamp;
+
+                latencyTicks[log.Index - 1] =
+                    latency;
+
+                long elapsedTicks =
+                    completedTimestamp -
+                    experimentStarted;
+
+                long elapsedMilliseconds =
+                    elapsedTicks *
+                    1_000L /
+                    Stopwatch.Frequency;
+
+                int windowIndex =
+                    (int)(
+                        elapsedMilliseconds /
+                        options.WindowMilliseconds);
+
+                windowIndex = Math.Min(
+                    windowIndex,
+                    totalWindows - 1);
+
+                completedPerWindow[windowIndex]++;
+
+                processedCount++;
+            }
+
+            checksum = localChecksum;
+        });
+
+        Task producerTask = Task.Run(() =>
+        {
+            Exception? failure = null;
+
+            try
             {
-                Exception? failure = null;
+                Seed seed =
+                    new(options.Seed);
 
-                try
+
+                ILogFactory factory =
+                    new LogFactory(
+                        GenerationProfile.Standard);
+
+                GeneratorEngine engine =
+                    new GeneratorEngine(
+                        seed,
+                        targetCount,
+                        factory);
+
+                int emittedCount = 0;
+
+                long nextDeadline =
+                    experimentStarted +
+                    intervalTicks;
+
+                int producedCount = engine.Run(log =>
                 {
-                    Seed seed =
-                        new(options.Seed);
+                    var timedLog =
+                        new TimedLog(
+                            log,
+                            Stopwatch.GetTimestamp());
 
-                    // Sadržaj je identičan za oba H9 scenarija.
-                    ILogFactory factory =
-                        new LogFactory(
-                            GenerationMode.Steady);
+                    int queueDepth =
+                        Interlocked.Increment(
+                            ref currentQueueDepth);
 
-                    GeneratorEngine engine =
-                        new GeneratorEngine(
-                            seed,
-                            targetCount,
-                            factory);
+                    UpdateMaximum(
+                        ref maximumQueueDepth,
+                        queueDepth);
 
-                    int emittedCount = 0;
-
-                    long nextDeadline =
-                        experimentStarted +
-                        intervalTicks;
-
-                    int producedCount = engine.Run(
-                        log =>
-                        {
-                            var timedLog =
-                                new TimedLog(
-                                    log,
-                                    Stopwatch.GetTimestamp());
-
-                            int queueDepth =
-                                Interlocked.Increment(
-                                    ref currentQueueDepth);
-
-                            UpdateMaximum(
-                                ref maximumQueueDepth,
-                                queueDepth);
-
-                            if (!channel.Writer.TryWrite(timedLog))
-                            {
-                                Interlocked.Decrement(
-                                    ref currentQueueDepth);
-
-                                throw new InvalidOperationException(
-                                    "Could not write a log to the channel.");
-                            }
-
-                            emittedCount++;
-
-                            if (emittedCount % batchSize == 0)
-                            {
-                                WaitUntil(nextDeadline);
-
-                                nextDeadline +=
-                                    intervalTicks;
-                            }
-                        });
-
-                    if (producedCount != targetCount)
+                    if (!channel.Writer.TryWrite(timedLog))
                     {
+                        Interlocked.Decrement(
+                            ref currentQueueDepth);
+
                         throw new InvalidOperationException(
-                            $"Expected {targetCount:N0} logs, " +
-                            $"but produced {producedCount:N0}.");
+                            "Could not write a log to the channel.");
                     }
-                }
-                catch (Exception exception)
+
+                    emittedCount++;
+
+                    if (emittedCount % batchSize == 0)
+                    {
+                        WaitUntil(nextDeadline);
+
+                        nextDeadline +=
+                            intervalTicks;
+                    }
+                });
+
+                if (producedCount != targetCount)
                 {
-                    failure = exception;
-                    throw;
+                    throw new InvalidOperationException(
+                        $"Expected {targetCount:N0} logs, " +
+                        $"but produced {producedCount:N0}.");
                 }
-                finally
-                {
-                    channel.Writer.TryComplete(failure);
-                }
-            });
+            }
+            catch (Exception exception)
+            {
+                failure = exception;
+                throw;
+            }
+            finally
+            {
+                channel.Writer.TryComplete(failure);
+            }
+        });
 
         await Task.WhenAll(
             producerTask,
@@ -250,8 +242,6 @@ public static class BurstSteadyLoadTest
                 experimentFinished -
                 experimentStarted);
 
-        // Statistika se računa nakon merenog dela.
-        // Sortiranje latencija zato ne utiče na rezultate testa.
         Array.Sort(latencyTicks);
 
         double averageLatencyMilliseconds =
@@ -374,8 +364,7 @@ public static class BurstSteadyLoadTest
                 1_000.0 /
                 Stopwatch.Frequency;
 
-            // Koristimo čekanje umesto aktivnog spinovanja,
-            // da sam generator opterećenja ne troši CPU.
+
             int sleepMilliseconds =
                 Math.Max(
                     1,

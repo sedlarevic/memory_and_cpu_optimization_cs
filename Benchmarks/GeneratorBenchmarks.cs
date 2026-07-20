@@ -13,20 +13,20 @@ public class GeneratorBenchmarks
     [Benchmark(Baseline = true)]
     public int Steady()
     {
-        return RunGenerator(GenerationMode.Steady);
+        return RunGenerator(GenerationProfile.Standard);
     }
 
     [Benchmark]
     public int Burst()
     {
-        return RunGenerator(GenerationMode.Burst);
+        return RunGenerator(GenerationProfile.ErrorHeavy);
     }
 
-    private int RunGenerator(GenerationMode mode)
+    private int RunGenerator(GenerationProfile profile)
     {
         Seed seed = new(SeedValue);
         ILogFactory factory =
-            new LogFactory(mode);
+            new LogFactory(profile);
         GeneratorEngine engine =
             new GeneratorEngine(
                 seed,

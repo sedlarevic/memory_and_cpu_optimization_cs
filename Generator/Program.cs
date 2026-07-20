@@ -3,7 +3,7 @@ using Generator;
 
 int targetCount = 5_000;
 int? suppliedSeed = null;
-GenerationMode mode = GenerationMode.Steady;
+GenerationProfile profile = GenerationProfile.Standard;
 
 if (args.Length >= 1 &&
     int.TryParse(args[0], out int parsedCount))
@@ -21,9 +21,9 @@ if (args.Length >= 3 &&
     Enum.TryParse(
         args[2],
         ignoreCase: true,
-        out GenerationMode parsedMode))
+        out GenerationProfile parsedMode))
 {
-    mode = parsedMode;
+    profile = parsedMode;
 }
 
 if (targetCount <= 0)
@@ -39,7 +39,7 @@ int seedValue =
     RandomNumberGenerator.GetInt32(int.MaxValue);
 
 Seed seed = new(seedValue);
-ILogFactory factory = new LogFactory(mode);
+ILogFactory factory = new LogFactory(profile);
 
 GeneratorEngine engine =
     new GeneratorEngine(
@@ -54,7 +54,7 @@ int producedCount = engine.Run(log =>
     checksum += log.Message.Length;
 });
 
-Console.WriteLine($"Scenario : {mode}");
+Console.WriteLine($"Scenario : {profile}");
 Console.WriteLine($"Seed     : {seedValue}");
 Console.WriteLine($"Produced : {producedCount:N0}");
 Console.WriteLine($"Checksum : {checksum:N0}");

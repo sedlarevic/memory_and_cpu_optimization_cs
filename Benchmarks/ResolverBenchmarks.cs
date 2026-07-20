@@ -23,7 +23,7 @@ public class ResolverBenchmarks
         Seed seed = new(SeedValue);
 
         ILogFactory factory =
-            new LogFactory(GenerationMode.Steady);
+            new LogFactory(GenerationProfile.Standard);
 
         GeneratorEngine engine =
             new GeneratorEngine(

@@ -22,7 +22,7 @@ public class BoxingBenchmarks
         Seed seed = new(SeedValue);
 
         ILogFactory factory =
-            new LogFactory(GenerationMode.Steady);
+            new LogFactory(GenerationProfile.Standard);
 
         GeneratorEngine engine =
             new GeneratorEngine(
@@ -93,7 +93,6 @@ public class BoxingBenchmarks
              index < _entries.Length;
              index++)
         {
-            // LogEntryValue se ovde boxuje.
             entries.Add(_entries[index]);
         }
 
@@ -103,7 +102,6 @@ public class BoxingBenchmarks
              index < entries.Count;
              index++)
         {
-            // Unboxing happens here.
             LogEntryValue entry =
                 (LogEntryValue)entries[index];
 
