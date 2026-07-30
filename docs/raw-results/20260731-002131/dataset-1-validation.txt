@@ -1,0 +1,12 @@
+===== DATABASE RESOLVER TEST =====
+DatasetId : 1
+Resolver  : span
+Expected  : 5,000 rows
+
+Dataset resolved successfully.
+Read rows         : 5,000
+Resolved rows     : 5,000
+Stored checksum   : 13818586
+Reader checksum   : 13818586
+Resolver checksum : 13818586
+Validation        : PASSED

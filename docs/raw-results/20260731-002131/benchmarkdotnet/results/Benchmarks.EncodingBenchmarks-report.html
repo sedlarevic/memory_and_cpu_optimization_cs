@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Benchmarks.EncodingBenchmarks-20260731-010024</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, macOS Sequoia 15.6.1 (24G90) [Darwin 24.6.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK 9.0.302
+  [Host]     : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+  DefaultJob : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method</th><th>TargetCount</th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>DecodeUtf8</td><td>5000</td><td>88.88 &mu;s</td><td>1.671 &mu;s</td><td>1.642 &mu;s</td><td>1.00</td><td>0.03</td><td>114.0137</td><td>113.8916</td><td>113.8916</td><td>553.51 KB</td><td>1.00</td>
+</tr><tr><td>DecodeUtf16</td><td>5000</td><td>118.58 &mu;s</td><td>2.204 &mu;s</td><td>2.062 &mu;s</td><td>1.33</td><td>0.03</td><td>126.7090</td><td>126.5869</td><td>126.5869</td><td>553.52 KB</td><td>1.00</td>
+</tr><tr><td>DecodeUtf8</td><td>100000</td><td>1,148.38 &mu;s</td><td>12.077 &mu;s</td><td>10.085 &mu;s</td><td>1.00</td><td>0.01</td><td>250.0000</td><td>250.0000</td><td>250.0000</td><td>11313.98 KB</td><td>1.00</td>
+</tr><tr><td>DecodeUtf16</td><td>100000</td><td>1,733.38 &mu;s</td><td>22.373 &mu;s</td><td>19.833 &mu;s</td><td>1.51</td><td>0.02</td><td>250.0000</td><td>250.0000</td><td>250.0000</td><td>11313.98 KB</td><td>1.00</td>
+</tr><tr><td>DecodeUtf8</td><td>1000000</td><td>13,857.32 &mu;s</td><td>275.329 &mu;s</td><td>376.874 &mu;s</td><td>1.00</td><td>0.04</td><td>250.0000</td><td>250.0000</td><td>250.0000</td><td>115123.22 KB</td><td>1.00</td>
+</tr><tr><td>DecodeUtf16</td><td>1000000</td><td>19,312.35 &mu;s</td><td>373.299 &mu;s</td><td>523.314 &mu;s</td><td>1.39</td><td>0.05</td><td>250.0000</td><td>250.0000</td><td>250.0000</td><td>115123.22 KB</td><td>1.00</td>
+</tr></tbody></table>
+</body>
+</html>

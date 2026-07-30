@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Benchmarks.ResolverBenchmarks-20260731-002211</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, macOS Sequoia 15.6.1 (24G90) [Darwin 24.6.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK 9.0.302
+  [Host]     : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+  DefaultJob : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method</th><th>TargetCount</th><th>Mean  </th><th>Error</th><th>StdDev</th><th>Ratio</th><th>RatioSD</th><th>Gen0 </th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>Split</td><td>5000</td><td>949.2 &mu;s</td><td>18.61 &mu;s</td><td>25.48 &mu;s</td><td>1.00</td><td>0.04</td><td>632.8125</td><td>3.79 MB</td><td>1.00</td>
+</tr><tr><td>Span</td><td>5000</td><td>635.4 &mu;s</td><td>6.52 &mu;s</td><td>6.10 &mu;s</td><td>0.67</td><td>0.02</td><td>490.2344</td><td>2.93 MB</td><td>0.77</td>
+</tr><tr><td>Split</td><td>100000</td><td>19,038.5 &mu;s</td><td>180.96 &mu;s</td><td>151.11 &mu;s</td><td>1.00</td><td>0.01</td><td>12500.0000</td><td>74.83 MB</td><td>1.00</td>
+</tr><tr><td>Span</td><td>100000</td><td>14,286.4 &mu;s</td><td>274.14 &mu;s</td><td>365.97 &mu;s</td><td>0.75</td><td>0.02</td><td>9640.6250</td><td>57.69 MB</td><td>0.77</td>
+</tr><tr><td>Split</td><td>1000000</td><td>191,283.3 &mu;s</td><td>3,768.35 &mu;s</td><td>4,627.88 &mu;s</td><td>1.00</td><td>0.03</td><td>125666.6667</td><td>753.7 MB</td><td>1.00</td>
+</tr><tr><td>Span</td><td>1000000</td><td>132,281.7 &mu;s</td><td>2,606.82 &mu;s</td><td>3,201.41 &mu;s</td><td>0.69</td><td>0.02</td><td>96000.0000</td><td>575.43 MB</td><td>0.76</td>
+</tr></tbody></table>
+</body>
+</html>

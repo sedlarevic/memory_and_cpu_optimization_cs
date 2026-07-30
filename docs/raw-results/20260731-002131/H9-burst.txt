@@ -1,0 +1,52 @@
+===== H9 LOAD TEST =====
+Pattern        : Burst
+Duration       : 10 s
+Average rate   : 100,000 logs/s
+Target per run : 1,000,000
+Repetitions    : 5
+
+Warmup...
+Warmup completed.
+
+Running 1/5...
+Run  1 | Elapsed  10,013.64 ms | CPU  1,947.10 ms | Allocated   971.68 MB
+       | GC 177/66/20 | Queue   68,525 | Avg   42.421 ms | P95   60.395 ms | P99   66.889 ms | CV 2.111
+       | Processed 1,000,000 | Checksum -2124107309237466817
+
+Running 2/5...
+Run  2 | Elapsed  10,002.71 ms | CPU  1,868.62 ms | Allocated   971.67 MB
+       | GC 177/68/19 | Queue   69,515 | Avg   42.892 ms | P95   57.684 ms | P99   59.380 ms | CV 2.105
+       | Processed 1,000,000 | Checksum -2124107309237466817
+
+Running 3/5...
+Run  3 | Elapsed  10,003.32 ms | CPU  1,893.68 ms | Allocated   971.68 MB
+       | GC 181/71/21 | Queue   66,406 | Avg   42.570 ms | P95   59.047 ms | P99   72.346 ms | CV 2.143
+       | Processed 1,000,000 | Checksum -2124107309237466817
+
+Running 4/5...
+Run  4 | Elapsed  10,003.34 ms | CPU  1,844.87 ms | Allocated   971.67 MB
+       | GC 177/68/20 | Queue   70,523 | Avg   42.593 ms | P95   58.531 ms | P99   62.343 ms | CV 2.162
+       | Processed 1,000,000 | Checksum -2124107309237466817
+
+Running 5/5...
+Run  5 | Elapsed  10,002.48 ms | CPU  1,869.31 ms | Allocated   971.68 MB
+       | GC 181/72/21 | Queue   66,418 | Avg   42.018 ms | P95   57.454 ms | P99   59.050 ms | CV 2.112
+       | Processed 1,000,000 | Checksum -2124107309237466817
+
+===== SUMMARY =====
+Pattern              : Burst
+Measured runs        : 5
+Elapsed              : 10,005.100 ms (SD 4.791)
+CPU time             : 1,884.716 ms (SD 38.911)
+Throughput           : 99,949.047 logs/s (SD 47.832)
+Allocated            : 971.676 MB (SD 0.004)
+Gen0                 : 178.600  (SD 2.191)
+Gen1                 : 69.000  (SD 2.449)
+Gen2                 : 20.200  (SD 0.837)
+Maximum queue        : 68,277.400 logs (SD 1,843.582)
+Average latency      : 42.499 ms (SD 0.319)
+P95 latency          : 58.622 ms (SD 1.180)
+P99 latency          : 64.002 ms (SD 5.626)
+Throughput CV        : 2.127  (SD 0.025)
+Checksums match       : True
+All counts match      : True

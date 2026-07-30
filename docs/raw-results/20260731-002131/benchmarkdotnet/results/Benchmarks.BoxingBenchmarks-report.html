@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Benchmarks.BoxingBenchmarks-20260731-002525</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, macOS Sequoia 15.6.1 (24G90) [Darwin 24.6.0]
+Apple M1, 1 CPU, 8 logical and 8 physical cores
+.NET SDK 9.0.302
+  [Host]     : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+  DefaultJob : .NET 9.0.7 (9.0.7, 9.0.725.31616), Arm64 RyuJIT armv8.0-a
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method    </th><th>TargetCount</th><th>Mean  </th><th>Error </th><th>StdDev</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>TypedList</td><td>5000</td><td>63.60 &mu;s</td><td>0.229 &mu;s</td><td>0.203 &mu;s</td><td>1.00</td><td>0.00</td><td>49.9268</td><td>49.9268</td><td>49.9268</td><td>156.35 KB</td><td>1.00</td>
+</tr><tr><td>ObjectListBoxing</td><td>5000</td><td>78.72 &mu;s</td><td>0.264 &mu;s</td><td>0.206 &mu;s</td><td>1.24</td><td>0.00</td><td>44.5557</td><td>15.5029</td><td>-</td><td>273.49 KB</td><td>1.75</td>
+</tr><tr><td>TypedList</td><td>100000</td><td>2,243.45 &mu;s</td><td>14.407 &mu;s</td><td>12.771 &mu;s</td><td>1.00</td><td>0.01</td><td>66.4063</td><td>66.4063</td><td>66.4063</td><td>3125.12 KB</td><td>1.00</td>
+</tr><tr><td>ObjectListBoxing</td><td>100000</td><td>9,365.46 &mu;s</td><td>84.101 &mu;s</td><td>78.668 &mu;s</td><td>4.17</td><td>0.04</td><td>843.7500</td><td>375.0000</td><td>93.7500</td><td>5468.9 KB</td><td>1.75</td>
+</tr><tr><td>TypedList</td><td>1000000</td><td>24,182.53 &mu;s</td><td>477.490 &mu;s</td><td>757.351 &mu;s</td><td>1.00</td><td>0.04</td><td>62.5000</td><td>62.5000</td><td>62.5000</td><td>31250.11 KB</td><td>1.00</td>
+</tr><tr><td>ObjectListBoxing</td><td>1000000</td><td>72,890.66 &mu;s</td><td>1,442.501 &mu;s</td><td>1,875.659 &mu;s</td><td>3.02</td><td>0.12</td><td>7571.4286</td><td>2571.4286</td><td>-</td><td>54687.55 KB</td><td>1.75</td>
+</tr></tbody></table>
+</body>
+</html>
