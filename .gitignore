@@ -212,3 +212,4 @@ FakesAssemblies/
 #Other
 .private/
 .env
+logs-*.txt
