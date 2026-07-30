@@ -14,6 +14,28 @@ public sealed class SqlDatabase
         _connectionString = connectionString;
     }
 
+    
+    internal async Task<SqlConnection>
+        OpenConnectionAsync(
+            CancellationToken cancellationToken = default)
+    {
+        var connection =
+            new SqlConnection(_connectionString);
+
+        try
+        {
+            await connection.OpenAsync(
+                cancellationToken);
+
+            return connection;
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+    
     public async Task<DatabaseConnectionInfo>
         VerifyConnectionAsync(
             CancellationToken cancellationToken = default)

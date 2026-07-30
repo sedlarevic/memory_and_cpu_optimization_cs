@@ -1,6 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using Domain;
 using Generator;
+using Infrastructure;
 
 namespace Benchmarks;
 
@@ -16,40 +17,110 @@ public class BoxingBenchmarks
     [GlobalSetup]
     public void Setup()
     {
+        const string connectionStringVariable =
+            "OPTIMIZATION_SQL_CONNECTION_STRING";
+
+        string? connectionString =
+            Environment.GetEnvironmentVariable(
+                connectionStringVariable);
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                $"Environment variable " +
+                $"'{connectionStringVariable}' is not configured.");
+        }
+
+        string datasetName =
+            TargetCount switch
+            {
+                5_000 =>
+                    "standard-5k-12345",
+
+                100_000 =>
+                    "standard-100k-12345",
+
+                1_000_000 =>
+                    "standard-1m-12345",
+
+                _ => throw new InvalidOperationException(
+                    $"No controlled dataset exists " +
+                    $"for {TargetCount:N0} rows.")
+            };
+
+        var database =
+            new SqlDatabase(connectionString);
+
+        var datasetRepository =
+            new DatasetRepository(database);
+
+        var logRepository =
+            new LogEntryRepository(database);
+
+        long datasetId =
+            datasetRepository
+                .GetIdByNameAsync(datasetName)
+                .GetAwaiter()
+                .GetResult();
+
+        LogEntryStatistics storedStatistics =
+            logRepository
+                .GetStatisticsAsync(datasetId)
+                .GetAwaiter()
+                .GetResult();
+
+        if (storedStatistics.Count != TargetCount)
+        {
+            throw new InvalidOperationException(
+                $"Dataset '{datasetName}' contains " +
+                $"{storedStatistics.Count:N0} rows, " +
+                $"but {TargetCount:N0} were expected.");
+        }
+
         _entries =
             new LogEntryValue[TargetCount];
 
-        Seed seed = new(SeedValue);
-
-        ILogFactory factory =
-            new LogFactory(GenerationProfile.Standard);
-
-        GeneratorEngine engine =
-            new GeneratorEngine(
-                seed,
-                TargetCount,
-                factory);
-
         int position = 0;
 
-        engine.Run(log =>
-        {
-            _entries[position] =
-                new LogEntryValue(
-                    log.Index,
-                    log.From,
-                    log.To,
-                    log.Level,
-                    log.Message);
+        LogEntryReadResult readResult =
+            logRepository
+                .ReadAsync(
+                    datasetId,
+                    log =>
+                    {
+                        if (position >= _entries.Length)
+                        {
+                            throw new InvalidOperationException(
+                                "Dataset contains more rows " +
+                                "than expected.");
+                        }
 
-            position++;
-        });
+                        _entries[position] =
+                            new LogEntryValue(
+                                log.Index,
+                                log.From,
+                                log.To,
+                                log.Level,
+                                log.Message);
 
-        if (position != TargetCount)
+                        position++;
+                    })
+                .GetAwaiter()
+                .GetResult();
+
+        if (position != TargetCount ||
+            readResult.Count != TargetCount)
         {
             throw new InvalidOperationException(
-                $"Expected {TargetCount} entries, " +
-                $"but generated {position}.");
+                $"Expected {TargetCount:N0} entries, " +
+                $"but loaded {position:N0}.");
+        }
+
+        if (readResult.Checksum !=
+            storedStatistics.Checksum)
+        {
+            throw new InvalidOperationException(
+                "Loaded dataset checksum is invalid.");
         }
     }
 
